@@ -1,0 +1,36 @@
+{
+  "name": "inspiration-tracker",
+  "version": "1.0.0",
+  "description": "A tracker for DM inspiration",
+  "main": "index.js",
+  "scripts": {
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
+    "test": "env-cmd -f ./config/test.env jest --watch --runInBand"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IanTWright/inspiration-tracker-api.git"
+  },
+  "author": "Ian Wright",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IanTWright/inspiration-tracker-api/issues"
+  },
+  "homepage": "https://github.com/IanTWright/inspiration-tracker-api#readme",
+  "devDependencies": {
+    "env-cmd": "^10.1.0",
+    "jest": "^27.0.6",
+    "nodemon": "^2.0.12",
+    "supertest": "^6.1.6"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.13.8",
+    "validator": "^13.6.0"
+  }
+}
