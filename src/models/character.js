@@ -4,19 +4,19 @@ const characterSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
       trim: true
     },
     campaign: {
       type: String,
-      require: true,
+      required: true,
       trim: true
     },
     inspirations: [
       {
         givenAt: {
           type: Date,
-          require: true
+          required: true
         },
         note: {
           type: String,

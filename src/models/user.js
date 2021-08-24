@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
       trim: true
     },
     email: {
@@ -98,6 +98,12 @@ userSchema.pre('save', async function (next) {
     user.password = await bcrypt.hash(user.password, 8);
   }
 
+  next();
+});
+
+//Delete user's characters when the user is removed
+userSchema.pre('remove', async function (next) {
+  await Character.deleteMany({ owner: this._id });
   next();
 });
 
