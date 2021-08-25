@@ -47,6 +47,19 @@ router.patch('/', auth, async (req, res) => {
 
 router.get('/', auth, async (req, res) => {
   try {
+    const character = await Character.find({ owner: req.user._id });
+
+    if (!character) {
+      return res.status(404).send();
+    }
+    res.send(character);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.get('/search', auth, async (req, res) => {
+  try {
     const character = await Character.findOne({
       name: new RegExp(`^${req.query.name}$`, 'i'),
       campaign: req.query.campaign,
