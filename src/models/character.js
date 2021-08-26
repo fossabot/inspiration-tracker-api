@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Inspiration = require('./inspiration');
 
 const characterSchema = new mongoose.Schema(
   {
@@ -12,18 +13,6 @@ const characterSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
-    inspirations: [
-      {
-        givenAt: {
-          type: Date,
-          required: true
-        },
-        note: {
-          type: String,
-          trim: true
-        }
-      }
-    ],
     owner: {
       type: mongoose.Schema.Types.ObjectID,
       required: true,
@@ -35,15 +24,16 @@ const characterSchema = new mongoose.Schema(
   }
 );
 
-characterSchema.statics.findByName = async (name) => {
-  const character = await Character.findOne({ name });
+characterSchema.virtual('inspirations', {
+  ref: 'Inspiration',
+  localField: '_id',
+  foreignField: 'character'
+});
 
-  if (!character) {
-    throw new Error('Unable to find character');
-  }
-
-  return character;
-};
+characterSchema.pre('remove', async function (next) {
+  await Inspiration.deleteMany({ character: this._id });
+  next();
+});
 
 const Character = mongoose.model('Character', characterSchema);
 

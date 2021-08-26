@@ -17,7 +17,37 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-router.patch('/', auth, async (req, res) => {
+router.get('/', auth, async (req, res) => {
+  try {
+    const character = await Character.find({ owner: req.user._id });
+
+    if (!character) {
+      return res.status(404).send();
+    }
+    res.send(character);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.get('/sheet', auth, async (req, res) => {
+  try {
+    const character = await Character.findOne({
+      name: new RegExp(`^${req.query.name}$`, 'i'),
+      campaign: req.query.campaign,
+      owner: req.user._id
+    });
+
+    if (!character) {
+      return res.status(404).send();
+    }
+    res.send(character);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.patch('/sheet', auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'campaign'];
   const isValid = updates.every((update) => allowedUpdates.includes(update));
@@ -45,37 +75,7 @@ router.patch('/', auth, async (req, res) => {
   }
 });
 
-router.get('/', auth, async (req, res) => {
-  try {
-    const character = await Character.find({ owner: req.user._id });
-
-    if (!character) {
-      return res.status(404).send();
-    }
-    res.send(character);
-  } catch (e) {
-    res.status(500).send();
-  }
-});
-
-router.get('/search', auth, async (req, res) => {
-  try {
-    const character = await Character.findOne({
-      name: new RegExp(`^${req.query.name}$`, 'i'),
-      campaign: req.query.campaign,
-      owner: req.user._id
-    });
-
-    if (!character) {
-      return res.status(404).send();
-    }
-    res.send(character);
-  } catch (e) {
-    res.status(500).send();
-  }
-});
-
-router.delete('/', auth, async (req, res) => {
+router.delete('/sheet', auth, async (req, res) => {
   try {
     const character = await Character.findOneAndDelete({
       name: new RegExp(`^${req.query.name}$`, 'i'),
