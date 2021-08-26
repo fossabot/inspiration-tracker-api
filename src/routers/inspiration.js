@@ -21,11 +21,12 @@ router.post('/', auth, async (req, res) => {
     const inspiration = await new Inspiration({
       ...req.body,
       givenAt: DateTime.now(),
-      character: character._id
+      character: character._id,
+      owner: req.user._id
     });
 
     await inspiration.save();
-    await res.send(inspiration);
+    await res.status(201).send(inspiration);
   } catch (e) {
     res.status(400).send(e);
   }
@@ -41,7 +42,7 @@ router.patch('/:id', auth, async (req, res) => {
   }
 
   try {
-    const inspiration = await Inspiration.findById(inspiration._id);
+    const inspiration = await Inspiration.findById(req.params.id);
 
     if (!inspiration) {
       return res.status(404).send();
@@ -55,14 +56,13 @@ router.patch('/:id', auth, async (req, res) => {
   }
 });
 
-router.delete('/:id'),
-  auth,
-  async (req, res) => {
-    try {
-      const inspiration = await Inspiration.findByIdAndDelete(req.params._id);
-      res.send(inspiration);
-    } catch (e) {
-      res.status(500).send();
-    }
-  };
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const inspiration = await Inspiration.findByIdAndDelete(req.params.id);
+    res.send(inspiration);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 module.exports = router;

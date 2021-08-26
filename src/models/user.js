@@ -3,6 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Character = require('./character');
+const Inspiration = require('./inspiration');
 
 const userSchema = new mongoose.Schema(
   {
@@ -104,6 +105,7 @@ userSchema.pre('save', async function (next) {
 //Delete user's characters when the user is removed
 userSchema.pre('remove', async function (next) {
   await Character.deleteMany({ owner: this._id });
+  await Inspiration.deleteMany({ owner: this._id });
   next();
 });
 
