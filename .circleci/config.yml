@@ -5,10 +5,8 @@ jobs:
   build:
     # pre-built images: https://circleci.com/docs/2.0/circleci-images/
     docker:
-      - image: circleci/node:14.17.5
       - image: circleci/mongo:4.4.6
     steps:
-      - checkout
 
       run:
         name: Install project dependencies
