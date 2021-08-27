@@ -28,14 +28,19 @@ jobs:
       - run:
           name: Run tests
           command: npm run ci
+
 workflows:
-  run_tests:
+  build_deploy:
     jobs:
       - build
-      - codecov/upload
+
       - heroku/deploy-via-git:
           requires:
             - build
           filters:
             branches:
               only: main
+  upload-to-codecov:
+    jobs:
+      - checkout
+      - codecov/upload
