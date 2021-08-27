@@ -29,6 +29,9 @@ jobs:
           name: Run tests
           command: npm run ci
 
+      - codecov/upload:
+          file: ./coverage/
+
 workflows:
   build_deploy:
     jobs:
@@ -40,7 +43,3 @@ workflows:
           filters:
             branches:
               only: main
-  upload-to-codecov:
-    jobs:
-      - checkout
-      - codecov/upload
