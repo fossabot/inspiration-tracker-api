@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../src/app');
+const db = require('../src/db/connect');
 const Inspiration = require('../src/models/inspiration');
 const {
   userOne,
@@ -10,6 +11,16 @@ const {
   inspirationOne,
   setupDatabase
 } = require('./fixtures/db');
+
+beforeAll((done) => {
+  db.connectMongo();
+  done();
+});
+
+afterAll((done) => {
+  db.disconnectMongo();
+  done();
+});
 
 describe('Adding inspiration to a character', () => {
   beforeEach(setupDatabase);
