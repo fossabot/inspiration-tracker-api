@@ -1,27 +1,22 @@
 version: 2.1
-orbs:
-  node: circleci/node@4.7.0
 jobs:
   build:
     # pre-built images: https://circleci.com/docs/2.0/circleci-images/
     docker:
+      - image: circleci/node:14.17.5
       - image: circleci/mongo:4.4.6
     steps:
+      - run:
+          name: Install project dependencies
+          command: npm install
 
-      run:
-        name: Install project dependencies
-        command: npm install
+      - run:
+          name: Run tests
+          command: npm run ci
 
-      run:
-        name: Run tests
-        command: npm run ci
-        
 workflows:
-  # The workflow version
-  version: 2.1
   # A unique name for the workflow
   run_build:
     # The jobs to run in this workflow
     jobs:
       - build
-
