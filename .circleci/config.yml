@@ -21,12 +21,9 @@ jobs:
           paths:
             - node_modules
 
-      - run: npm run lint
-
       - run:
           name: Run tests
-          command: npm test -- --runInBand
-
+          command: npm run ci
 workflows:
   run_build:
     jobs:
