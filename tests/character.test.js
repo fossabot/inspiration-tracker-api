@@ -50,7 +50,7 @@ describe('Searching for characters', () => {
 
   test('Should return a single character for an authenticated user', async () => {
     await request(app)
-      .get(`/character/search?name=${characterTwo.name}&campaign=${characterTwo.campaign}`)
+      .get(`/character/sheet?name=${characterTwo.name}&campaign=${characterTwo.campaign}`)
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send()
       .expect(200);
@@ -61,14 +61,17 @@ describe('Searching for characters', () => {
 
   test('Should not return a character for the wrong user', async () => {
     await request(app)
-      .get(`/character/search?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .get(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send()
       .expect(404);
   });
 
   test('Should not return a single character for an unauthenticated user', async () => {
-    await request(app).get(`/character?name=${characterOne.name}&campaign=${characterOne.campaign}`).send().expect(401);
+    await request(app)
+      .get(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .send()
+      .expect(401);
   });
 });
 
@@ -76,16 +79,19 @@ describe('Deleting characters', () => {
   beforeEach(setupDatabase);
 
   test('Should delete a single character for an authenticated user', async () => {
-    await request(app)
-      .delete(`/character?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+    const response = await request(app)
+      .delete(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send()
       .expect(200);
+
+    const character = Character.findById({ _id: response._id });
+    expect(character).toBeNull;
   });
 
   test('Should not delete a single character for the wrong user', async () => {
     await request(app)
-      .delete(`/character?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .delete(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send()
       .expect(404);
@@ -93,7 +99,7 @@ describe('Deleting characters', () => {
 
   test('Should not delete a single character for an unauthenticated user', async () => {
     await request(app)
-      .delete(`/character?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .delete(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .send()
       .expect(401);
   });

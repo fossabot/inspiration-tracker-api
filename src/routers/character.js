@@ -77,7 +77,7 @@ router.patch('/sheet', auth, async (req, res) => {
 
 router.delete('/sheet', auth, async (req, res) => {
   try {
-    const character = await Character.findOneAndDelete({
+    const character = await Character.findOne({
       name: new RegExp(`^${req.query.name}$`, 'i'),
       campaign: req.query.campaign,
       owner: req.user._id
@@ -87,6 +87,7 @@ router.delete('/sheet', auth, async (req, res) => {
       res.status(404).send();
     }
 
+    character.remove();
     res.send(character);
   } catch (e) {
     res.status(500).send();

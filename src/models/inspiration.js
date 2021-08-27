@@ -12,6 +12,11 @@ const inspirationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectID,
     required: true,
     ref: 'Character'
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectID,
+    required: true,
+    ref: 'User'
   }
 });
 

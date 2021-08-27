@@ -1,5 +1,4 @@
 const express = require('express');
-require('./db/connect');
 const authRouter = require('./routers/auth');
 const userRouter = require('./routers/user');
 const characterRouter = require('./routers/character');
