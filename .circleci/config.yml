@@ -3,6 +3,7 @@ version: 2.1
 
 orbs:
   heroku: circleci/heroku@1.2.6
+  codecov: codecov/codecov@3.0.0
 
 jobs:
   build:
@@ -31,6 +32,7 @@ workflows:
   run_tests:
     jobs:
       - build
+      - codecov/upload
       - heroku/deploy-via-git:
           requires:
             - build

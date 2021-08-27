@@ -10,7 +10,7 @@
     "start": "node src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
     "test": "env-cmd -f ./config/test.env jest --watch --runInBand",
-    "ci": "jest --runInBand"
+    "ci": "jest --ci --coverage && codecov --runInBand"
   },
   "jest": {
     "testEnvironment": "node"
@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/IanTWright/inspiration-tracker-api#readme",
   "devDependencies": {
+    "codecov": "^3.8.3",
     "env-cmd": "^10.1.0",
     "jest": "^27.0.6",
     "nodemon": "^2.0.12",
