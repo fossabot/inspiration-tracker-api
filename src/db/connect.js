@@ -14,4 +14,12 @@ const connectMongo = () => {
   });
 };
 
-module.exports = connectMongo;
+const disconnectMongo = () => {
+  return new Promise((resolve, reject) => {
+    mongoose.disconnect().then((res, err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
+};
+module.exports = { connectMongo, disconnectMongo };

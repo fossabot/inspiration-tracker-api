@@ -4,9 +4,6 @@ const { DateTime } = require('luxon');
 const User = require('../../src/models/user');
 const Character = require('../../src/models/character');
 const Inspiration = require('../../src/models/inspiration');
-const connectMongo = require('../../src/db/connect');
-
-connectMongo();
 
 const userOneId = new mongoose.Types.ObjectId();
 const userOne = {
