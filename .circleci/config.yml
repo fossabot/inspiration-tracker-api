@@ -30,7 +30,7 @@ jobs:
           command: npm run ci
 
       - codecov/upload:
-          file: ./coverage/
+          file: ./coverage/clover.xml
 
 workflows:
   build_deploy:
