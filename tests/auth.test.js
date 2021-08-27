@@ -1,7 +1,18 @@
 const request = require('supertest');
 const app = require('../src/app');
+const db = require('../src/db/connect');
 const User = require('../src/models/user');
 const { userOne, userOneId, setupDatabase } = require('./fixtures/db');
+
+beforeAll((done) => {
+  db.connectMongo();
+  done();
+});
+
+afterAll((done) => {
+  db.disconnectMongo();
+  done();
+});
 
 describe('Registering a new user', () => {
   beforeEach(setupDatabase);
