@@ -4,6 +4,7 @@ version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.6
   codecov: codecov/codecov@3.0.0
+  discord: antonioned/discord@0.1.0
 
 jobs:
   build:
@@ -32,6 +33,10 @@ jobs:
       - codecov/upload:
           file: ./coverage/clover.xml
 
+      - discord/status:
+          failure_message: ":o: Triggered by: **${CIRCLE_USERNAME}** \\n\\n The **${CIRCLE_JOB}** has failed!"
+          success_message: ":white_check_mark: Triggered by: **${CIRCLE_USERNAME}** \\n\\n The **${CIRCLE_JOB}** has succeeded!"
+
 workflows:
   build_deploy:
     jobs:
@@ -43,3 +48,7 @@ workflows:
           filters:
             branches:
               only: main
+          post-steps:
+            - discord/status:
+                failure_message: ":o: Triggered by: **${CIRCLE_USERNAME}** \\n\\n The **${CIRCLE_JOB}** has failed!"
+                success_message: ":tada: Triggered by: **${CIRCLE_USERNAME}** \\n\\n The **${CIRCLE_JOB}** has succeeded! API deployed successfully!"
