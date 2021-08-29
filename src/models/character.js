@@ -24,6 +24,12 @@ const characterSchema = new mongoose.Schema(
   }
 );
 
+characterSchema.virtual('inspirations', {
+  ref: 'Inspiration',
+  localField: '_id',
+  foreignField: 'character'
+});
+
 characterSchema.pre('remove', async function (next) {
   await Inspiration.deleteMany({ character: this._id });
   next();
