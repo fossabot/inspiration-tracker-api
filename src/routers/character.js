@@ -19,12 +19,12 @@ router.post('/', auth, async (req, res) => {
 
 router.get('/', auth, async (req, res) => {
   try {
-    const character = await Character.find({ owner: req.user._id });
+    const characters = await Character.find({ owner: req.user._id });
 
-    if (!character) {
-      return res.status(404).send();
+    if (characters.length === 0) {
+      res.status(404).send();
     }
-    res.send(character);
+    res.send({ characters });
   } catch (e) {
     res.status(500).send();
   }
@@ -36,12 +36,16 @@ router.get('/sheet', auth, async (req, res) => {
       name: new RegExp(`^${req.query.name}$`, 'i'),
       campaign: req.query.campaign,
       owner: req.user._id
-    });
+    })
+      .lean()
+      .populate('inspirations')
+      .exec();
 
     if (!character) {
       return res.status(404).send();
     }
-    res.send(character);
+
+    res.send({ character });
   } catch (e) {
     res.status(500).send();
   }
