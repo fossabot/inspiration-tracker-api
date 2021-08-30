@@ -4,7 +4,11 @@ const auth = require('../middleware/auth');
 const router = new express.Router();
 
 router.get('/profile', auth, async (req, res) => {
-  res.send(req.user);
+  try {
+    res.send(req.user);
+  } catch (e) {
+    res.status(500).send();
+  }
 });
 
 router.patch('/profile', auth, async (req, res) => {

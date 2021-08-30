@@ -1,6 +1,6 @@
 {
-  "name": "inspiration-tracker",
-  "version": "1.0.0",
+  "name": "inspiration-tracker-api",
+  "version": "1.1.0",
   "description": "A tracker for DM inspiration",
   "engines": {
     "node": "16.8"
@@ -38,7 +38,6 @@
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "luxon": "^2.0.2",
     "mongoose": "^6.0.1",
     "validator": "^13.6.0"
   }

@@ -1,5 +1,4 @@
 const express = require('express');
-const { DateTime } = require('luxon');
 const Character = require('../models/character');
 const Inspiration = require('../models/inspiration');
 const auth = require('../middleware/auth');
@@ -20,7 +19,6 @@ router.post('/', auth, async (req, res) => {
 
     const inspiration = await new Inspiration({
       ...req.body,
-      givenAt: DateTime.now(),
       character: character._id,
       owner: req.user._id
     });
@@ -29,6 +27,25 @@ router.post('/', auth, async (req, res) => {
     await res.status(201).send(inspiration);
   } catch (e) {
     res.status(400).send(e);
+  }
+});
+
+router.get('/', auth, async (req, res) => {
+  try {
+    const character = await Character.findOne({
+      name: new RegExp(`^${req.query.name}$`, 'i'),
+      campaign: req.query.campaign,
+      owner: req.user._id
+    });
+
+    if (!character) {
+      res.status(404).send();
+    }
+
+    const inspiration = await Inspiration.find({ character: character._id });
+    await res.send(inspiration);
+  } catch (e) {
+    res.status(500).send();
   }
 });
 

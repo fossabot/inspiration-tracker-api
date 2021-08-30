@@ -9,7 +9,9 @@ const {
   characterOne,
   characterTwo,
   inspirationOne,
-  setupDatabase
+  inspirationTwo,
+  setupDatabase,
+  userOneId
 } = require('./fixtures/db');
 
 beforeAll((done) => {
@@ -58,8 +60,38 @@ describe('Adding inspiration to a character', () => {
   });
 });
 
+describe('Fetching inspiration for a character', () => {
+  test('Should return all inspiration objects for a character of an authenticated user', async () => {
+    const response = await request(app)
+      .get(`/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+      .send()
+      .expect(200);
+
+    expect(JSON.stringify(response.body[0]._id)).toEqual(JSON.stringify(inspirationOne._id));
+    expect(JSON.stringify(response.body[1]._id)).toEqual(JSON.stringify(inspirationTwo._id));
+    expect(JSON.stringify(response.body[0].owner)).toStrictEqual(JSON.stringify(userOneId));
+    expect(response.body).toHaveLength(2);
+  });
+
+  test('Should not return the inspiration for a character if it is not the owner', async () => {
+    await request(app)
+      .get(`/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
+      .send()
+      .expect(404);
+  });
+
+  test('Should not return inspirations for a character if requested by an unauthenticated user', async () => {
+    await request(app)
+      .get(`/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .send()
+      .expect(401);
+  });
+});
+
 describe('Updating notes on the inspiration object', () => {
-  test('Should update the note field on the inspiration', async () => {
+  test('Should update the note field on the inspiration for an authenticated user', async () => {
     const response = await request(app)
       .patch(`/inspiration/${inspirationOne._id}`)
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
