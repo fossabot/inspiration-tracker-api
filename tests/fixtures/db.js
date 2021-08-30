@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const { DateTime } = require('luxon');
 const User = require('../../src/models/user');
 const Character = require('../../src/models/character');
 const Inspiration = require('../../src/models/inspiration');
@@ -55,7 +54,13 @@ const characterThree = {
 const inspirationOne = {
   _id: new mongoose.Types.ObjectId(),
   note: 'Inspiration from when the thing was being tested that one time.',
-  givenAt: DateTime.now(),
+  character: characterOne._id,
+  owner: userOneId
+};
+
+const inspirationTwo = {
+  _id: new mongoose.Types.ObjectId(),
+  note: 'Inspiration from when the thing was being tested that one time but you know, it is for the second one.',
   character: characterOne._id,
   owner: userOneId
 };
@@ -70,6 +75,7 @@ const setupDatabase = async () => {
   await new Character(characterTwo).save();
   await new Character(characterThree).save();
   await new Inspiration(inspirationOne).save();
+  await new Inspiration(inspirationTwo).save();
 };
 
 module.exports = {
@@ -80,5 +86,6 @@ module.exports = {
   characterOne,
   characterTwo,
   inspirationOne,
+  inspirationTwo,
   setupDatabase
 };

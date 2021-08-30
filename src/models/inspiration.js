@@ -4,10 +4,6 @@ const inspirationSchema = new mongoose.Schema({
   note: {
     type: String
   },
-  givenAt: {
-    type: String,
-    required: true
-  },
   character: {
     type: mongoose.Schema.Types.ObjectID,
     required: true,

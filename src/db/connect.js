@@ -1,25 +1,24 @@
 const mongoose = require('mongoose');
 
-const connectMongo = () => {
-  return new Promise((resolve, reject) => {
-    mongoose
-      .connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      })
-      .then((res, err) => {
-        if (err) return reject(err);
-        resolve(console.log('Connected to MongoDB.'));
-      });
-  });
+const connectMongo = async () => {
+  try {
+    console.log('Starting MongoDB.');
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
+    console.log('Connected to MongoDB.');
+  } catch (err) {
+    console.error(err.message);
+  }
 };
 
-const disconnectMongo = () => {
-  return new Promise((resolve, reject) => {
-    mongoose.disconnect().then((res, err) => {
-      if (err) return reject(err);
-      resolve();
-    });
-  });
+const disconnectMongo = async () => {
+  try {
+    await mongoose.disconnect();
+  } catch (err) {
+    console.error(err.message);
+  }
 };
 module.exports = { connectMongo, disconnectMongo };

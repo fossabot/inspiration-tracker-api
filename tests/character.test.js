@@ -52,7 +52,7 @@ describe('Searching for characters', () => {
       .send()
       .expect(200);
 
-    expect(response.body).toHaveLength(2);
+    expect(response.body.characters).toHaveLength(2);
   });
 
   test('Should not return all characters for an unauthenticated user', async () => {
