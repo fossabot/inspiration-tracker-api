@@ -1,8 +1,8 @@
 const request = require('supertest');
-const app = require('../src/app');
-const db = require('../src/db/connect');
-const Character = require('../src/models/character');
-const { userOne, userTwo, characterOne, characterTwo, setupDatabase } = require('./fixtures/db');
+const app = require('../../../src/app');
+const db = require('../../../src/db/connect');
+const Character = require('../../../src/models/character');
+const { userOne, userTwo, characterOne, characterTwo, setupDatabase } = require('../../fixtures/db');
 
 beforeAll((done) => {
   db.connectMongo();
@@ -19,7 +19,7 @@ describe('Creating a character', () => {
 
   test('Should create character for an authenticated user', async () => {
     const response = await request(app)
-      .post('/character')
+      .post('/api/v1/character')
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send({
         name: 'Post Test',
@@ -33,7 +33,7 @@ describe('Creating a character', () => {
 
   test('Should not create character for an unauthenticated user', async () => {
     await request(app)
-      .post('/character')
+      .post('/api/v1/character')
       .send({
         name: 'Post Test',
         campaign: 'Post Campaign'
@@ -47,7 +47,7 @@ describe('Searching for characters', () => {
 
   test('Should return all characters for an authenticated user', async () => {
     const response = await request(app)
-      .get('/character')
+      .get('/api/v1/character')
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send()
       .expect(200);
@@ -56,12 +56,12 @@ describe('Searching for characters', () => {
   });
 
   test('Should not return all characters for an unauthenticated user', async () => {
-    await request(app).get('/character').send().expect(401);
+    await request(app).get('/api/v1/character').send().expect(401);
   });
 
   test('Should return a single character for an authenticated user', async () => {
     await request(app)
-      .get(`/character/sheet?name=${characterTwo.name}&campaign=${characterTwo.campaign}`)
+      .get(`/api/v1/character/sheet?name=${characterTwo.name}&campaign=${characterTwo.campaign}`)
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send()
       .expect(200);
@@ -72,7 +72,7 @@ describe('Searching for characters', () => {
 
   test('Should not return a character for the wrong user', async () => {
     await request(app)
-      .get(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .get(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send()
       .expect(404);
@@ -80,7 +80,7 @@ describe('Searching for characters', () => {
 
   test('Should not return a single character for an unauthenticated user', async () => {
     await request(app)
-      .get(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .get(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .send()
       .expect(401);
   });
@@ -91,7 +91,7 @@ describe('Deleting characters', () => {
 
   test('Should delete a single character for an authenticated user', async () => {
     const response = await request(app)
-      .delete(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .delete(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send()
       .expect(200);
@@ -102,7 +102,7 @@ describe('Deleting characters', () => {
 
   test('Should not delete a single character for the wrong user', async () => {
     await request(app)
-      .delete(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .delete(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send()
       .expect(404);
@@ -110,7 +110,7 @@ describe('Deleting characters', () => {
 
   test('Should not delete a single character for an unauthenticated user', async () => {
     await request(app)
-      .delete(`/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .delete(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .send()
       .expect(401);
   });

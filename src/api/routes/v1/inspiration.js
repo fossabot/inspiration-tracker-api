@@ -1,9 +1,7 @@
-const express = require('express');
-const Character = require('../models/character');
-const Inspiration = require('../models/inspiration');
-const auth = require('../middleware/auth');
-
-const router = new express.Router();
+const router = require('express').Router();
+const Character = require('../../../models/character');
+const Inspiration = require('../../../models/inspiration');
+const auth = require('../../middleware/auth');
 
 router.post('/', auth, async (req, res) => {
   try {

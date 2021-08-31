@@ -1,8 +1,8 @@
 const request = require('supertest');
-const app = require('../src/app');
-const db = require('../src/db/connect');
-const User = require('../src/models/user');
-const { userOne, userOneId, setupDatabase } = require('./fixtures/db');
+const app = require('../../../src/app');
+const db = require('../../../src/db/connect');
+const User = require('../../../src/models/user');
+const { userOne, userOneId, setupDatabase } = require('../../fixtures/db');
 
 beforeAll((done) => {
   db.connectMongo();
@@ -19,7 +19,7 @@ describe('Registering a new user', () => {
 
   test('Should signup a new user', async () => {
     const response = await request(app)
-      .post('/auth/register')
+      .post('/api/v1/auth/register')
       .send({
         name: 'Test User',
         email: 'test-user@example.com',
@@ -42,7 +42,7 @@ describe('Registering a new user', () => {
 
   test('Should not signup user with invalid name', async () => {
     await request(app)
-      .post('/auth/register')
+      .post('/api/v1/auth/register')
       .send({
         name: null,
         password: 'SuperSecureTestP@ss',
@@ -53,7 +53,7 @@ describe('Registering a new user', () => {
 
   test('Should not signup user with invalid email', async () => {
     await request(app)
-      .post('/auth/register')
+      .post('/api/v1/auth/register')
       .send({
         name: 'Test User',
         password: 'SuperSecureTestP@ss',
@@ -64,7 +64,7 @@ describe('Registering a new user', () => {
 
   test('Should not signup user with invalid password', async () => {
     await request(app)
-      .post('/auth/register')
+      .post('/api/v1/auth/register')
       .send({
         name: 'Test User',
         password: 'password',
@@ -79,7 +79,7 @@ describe('Authentication endpoints', () => {
 
   test('Should login existing user', async () => {
     const response = await request(app)
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: userOne.email,
         password: userOne.password
@@ -92,7 +92,7 @@ describe('Authentication endpoints', () => {
 
   test('Should not login nonexistent user', async () => {
     await request(app)
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: 'fakeuser@example.net',
         password: 'badpass123'
@@ -102,7 +102,7 @@ describe('Authentication endpoints', () => {
 
   test('Should logout existing user', async () => {
     await request(app)
-      .post('/auth/logout')
+      .post('/api/v1/auth/logout')
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send()
       .expect(200);
@@ -113,7 +113,7 @@ describe('Authentication endpoints', () => {
 
   test('Should logout all user sessions for existing user', async () => {
     await request(app)
-      .post('/auth/logoutAll')
+      .post('/api/v1/auth/logoutAll')
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send()
       .expect(200);

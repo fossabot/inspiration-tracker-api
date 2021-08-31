@@ -1,7 +1,7 @@
 const request = require('supertest');
-const app = require('../src/app');
-const db = require('../src/db/connect');
-const Inspiration = require('../src/models/inspiration');
+const app = require('../../../src/app');
+const db = require('../../../src/db/connect');
+const Inspiration = require('../../../src/models/inspiration');
 const {
   userOne,
   userTwo,
@@ -12,7 +12,7 @@ const {
   inspirationTwo,
   setupDatabase,
   userOneId
-} = require('./fixtures/db');
+} = require('../../fixtures/db');
 
 beforeAll((done) => {
   db.connectMongo();
@@ -28,7 +28,7 @@ describe('Adding inspiration to a character', () => {
   beforeEach(setupDatabase);
   test('Granting inspiration to a character of an authenticated user', async () => {
     const response = await request(app)
-      .post(`/inspiration?name=${characterTwo.name}&campaign=${characterTwo.campaign}`)
+      .post(`/api/v1/inspiration?name=${characterTwo.name}&campaign=${characterTwo.campaign}`)
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send({
         note: 'granting inspiration to a character as a test!'
@@ -42,7 +42,7 @@ describe('Adding inspiration to a character', () => {
 
   test('Should not grant inspiration to a character that the user does not own', async () => {
     await request(app)
-      .post(`/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .post(`/api/v1/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send({
         note: 'granting inspiration to a character as a test!'
@@ -52,7 +52,7 @@ describe('Adding inspiration to a character', () => {
 
   test('Should not grant inspiration to a character from an unauthenticated user', async () => {
     await request(app)
-      .post(`/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .post(`/api/v1/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .send({
         note: 'granting inspiration to a character as a test!'
       })
@@ -63,7 +63,7 @@ describe('Adding inspiration to a character', () => {
 describe('Fetching inspiration for a character', () => {
   test('Should return all inspiration objects for a character of an authenticated user', async () => {
     const response = await request(app)
-      .get(`/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .get(`/api/v1/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send()
       .expect(200);
@@ -76,7 +76,7 @@ describe('Fetching inspiration for a character', () => {
 
   test('Should not return the inspiration for a character if it is not the owner', async () => {
     await request(app)
-      .get(`/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .get(`/api/v1/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
       .send()
       .expect(404);
@@ -84,7 +84,7 @@ describe('Fetching inspiration for a character', () => {
 
   test('Should not return inspirations for a character if requested by an unauthenticated user', async () => {
     await request(app)
-      .get(`/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .get(`/api/v1/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
       .send()
       .expect(401);
   });
@@ -93,7 +93,7 @@ describe('Fetching inspiration for a character', () => {
 describe('Updating notes on the inspiration object', () => {
   test('Should update the note field on the inspiration for an authenticated user', async () => {
     const response = await request(app)
-      .patch(`/inspiration/${inspirationOne._id}`)
+      .patch(`/api/v1/inspiration/${inspirationOne._id}`)
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send({
         note: 'This is an updated note'
@@ -106,7 +106,7 @@ describe('Updating notes on the inspiration object', () => {
 
   test('Should not update inspiration with invalid fields ', async () => {
     await request(app)
-      .patch(`/inspiration/${inspirationOne._id}`)
+      .patch(`/api/v1/inspiration/${inspirationOne._id}`)
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send({
         inspNote: 'This is an updated note'
@@ -115,7 +115,7 @@ describe('Updating notes on the inspiration object', () => {
   });
 
   test('Should not update inspiration from an unauthenticated user', async () => {
-    const response = await request(app).patch(`/inspiration/${inspirationOne._id}`).send({
+    await request(app).patch(`/api/v1/inspiration/${inspirationOne._id}`).send({
       note: 'This is an updated note'
     });
     expect(401);
@@ -125,7 +125,7 @@ describe('Updating notes on the inspiration object', () => {
 describe('Removing inspirations from the character', () => {
   test('Should remove inspiration from a character', async () => {
     const response = await request(app)
-      .delete(`/inspiration/${inspirationOne._id}`)
+      .delete(`/api/v1/inspiration/${inspirationOne._id}`)
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send();
     expect(200);
