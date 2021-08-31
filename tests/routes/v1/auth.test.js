@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../../src/app');
 const db = require('../../../src/db/connect');
 const User = require('../../../src/models/user');
-const { userOne, userOneId, setupDatabase } = require('../../fixtures/db');
+const { userOne, userOneId, setupDatabase, disconnectMongo } = require('../../fixtures/db');
 
 beforeAll((done) => {
   db.connectMongo();
@@ -10,7 +10,7 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  db.disconnectMongo();
+  disconnectMongo();
   done();
 });
 

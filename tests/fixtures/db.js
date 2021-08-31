@@ -78,6 +78,14 @@ const setupDatabase = async () => {
   await new Inspiration(inspirationTwo).save();
 };
 
+const disconnectMongo = async () => {
+  try {
+    await mongoose.disconnect();
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
 module.exports = {
   userOneId,
   userTwoId,
@@ -87,5 +95,6 @@ module.exports = {
   characterTwo,
   inspirationOne,
   inspirationTwo,
-  setupDatabase
+  setupDatabase,
+  disconnectMongo
 };

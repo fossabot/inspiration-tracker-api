@@ -5,13 +5,14 @@ const Inspiration = require('../../../src/models/inspiration');
 const {
   userOne,
   userTwo,
+  userOneId,
   userTwoId,
   characterOne,
   characterTwo,
   inspirationOne,
   inspirationTwo,
   setupDatabase,
-  userOneId
+  disconnectMongo
 } = require('../../fixtures/db');
 
 beforeAll((done) => {
@@ -20,7 +21,7 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  db.disconnectMongo();
+  disconnectMongo();
   done();
 });
 
