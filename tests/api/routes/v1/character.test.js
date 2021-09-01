@@ -1,8 +1,15 @@
 const request = require('supertest');
-const app = require('../../../src/app');
-const connectMongo = require('../../../src/db/connect');
-const Character = require('../../../src/models/character');
-const { userOne, userTwo, characterOne, characterTwo, setupDatabase, disconnectMongo } = require('../../fixtures/db');
+const app = require('a../../../src/app');
+const connectMongo = require('../../../../src/db/connect');
+const Character = require('../../../../src/models/character');
+const {
+  userOne,
+  userTwo,
+  characterOne,
+  characterTwo,
+  setupDatabase,
+  disconnectMongo
+} = require('../../../fixtures/db');
 
 beforeAll((done) => {
   connectMongo();
@@ -39,6 +46,44 @@ describe('Creating a character', () => {
         campaign: 'Post Campaign'
       })
       .expect(401);
+  });
+});
+
+describe('Updating a character', () => {
+  beforeEach(setupDatabase);
+  test('Should update a character for an authenticated user', async () => {
+    const response = await request(app)
+      .patch(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+      .send({
+        name: 'Testing the name change'
+      })
+      .expect(200);
+    const character = await Character.findById(characterOne._id);
+    expect(character.name).toBe(response.body.name);
+  });
+
+  test('Should not update a character for the wrong user', async () => {
+    await request(app)
+      .patch(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
+      .send({
+        name: 'Testing the name change'
+      })
+      .expect(404);
+    const character = await Character.findById(characterOne._id);
+    expect(character.name).toBe(characterOne.name);
+  });
+
+  test('Should not update a character for an unauthenticated user', async () => {
+    await request(app)
+      .patch(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .send({
+        name: 'Testing the name change'
+      })
+      .expect(401);
+    const character = await Character.findById(characterOne._id);
+    expect(character.name).toBe(characterOne.name);
   });
 });
 

@@ -1,9 +1,9 @@
 const request = require('supertest');
-const app = require('../../../src/app');
-const connectMongo = require('../../../src/db/connect');
-const User = require('../../../src/models/user');
-const Character = require('../../../src/models/character');
-const { userOne, userOneId, setupDatabase, disconnectMongo } = require('../../fixtures/db');
+const app = require('../../../../src/app');
+const connectMongo = require('../../../../src/db/connect');
+const User = require('../../../../src/models/user');
+const Character = require('../../../../src/models/character');
+const { userOne, userOneId, setupDatabase, disconnectMongo } = require('../../../fixtures/db');
 
 beforeAll((done) => {
   connectMongo();

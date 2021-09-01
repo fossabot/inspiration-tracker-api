@@ -1,7 +1,7 @@
 const request = require('supertest');
-const app = require('../../../src/app');
-const connectMongo = require('../../../src/db/connect');
-const Inspiration = require('../../../src/models/inspiration');
+const app = require('../../../../src/app');
+const connectMongo = require('../../../../src/db/connect');
+const Inspiration = require('../../../../src/models/inspiration');
 const {
   userOne,
   userTwo,
@@ -13,7 +13,7 @@ const {
   inspirationTwo,
   setupDatabase,
   disconnectMongo
-} = require('../../fixtures/db');
+} = require('../../../fixtures/db');
 
 beforeAll((done) => {
   connectMongo();
