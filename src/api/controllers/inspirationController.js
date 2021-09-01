@@ -10,7 +10,7 @@ const grantInspiration = async (req, res) => {
     });
 
     if (!character) {
-      return res.status(404).send();
+      return res.sendStatus(404);
     }
 
     const inspiration = await new Inspiration({
@@ -26,7 +26,7 @@ const grantInspiration = async (req, res) => {
   }
 };
 
-const findInspiration = async (req, res) => {
+const findAllInspiration = async (req, res) => {
   try {
     const character = await Character.findOne({
       name: new RegExp(`^${req.query.name}$`, 'i'),
@@ -35,14 +35,27 @@ const findInspiration = async (req, res) => {
     });
 
     if (!character) {
-      res.status(404).send();
+      return res.sendStatus(404);
     }
 
     const inspiration = await Inspiration.find({ character: character._id });
     await res.send(inspiration);
   } catch (e) {
-    res.status(500).send();
+    res.sendStatus(500);
   }
+};
+
+const findInspiration = async (req, res) => {
+  await Inspiration.findOne({ _id: req.params.id, owner: req.user._id })
+    .then((inspiration) => {
+      if (!inspiration) {
+        return res.sendStatus(404);
+      }
+      res.send(inspiration);
+    })
+    .catch((e) => {
+      res.sendStatus(500);
+    });
 };
 
 const updateInspiration = async (req, res) => {
@@ -55,10 +68,10 @@ const updateInspiration = async (req, res) => {
   }
 
   try {
-    const inspiration = await Inspiration.findById(req.params.id);
+    const inspiration = await Inspiration.findOne({ _id: req.params.id, owner: req.user._id });
 
     if (!inspiration) {
-      return res.status(404).send();
+      return res.sendStatus(404);
     }
 
     updates.forEach((update) => (inspiration[update] = req.body[update]));
@@ -71,11 +84,15 @@ const updateInspiration = async (req, res) => {
 
 const deleteInspiration = async (req, res) => {
   try {
-    const inspiration = await Inspiration.findByIdAndDelete(req.params.id);
-    res.send(inspiration);
+    await Inspiration.findOneAndDelete({ _id: req.params.id, owner: req.user._id }).then((inspiration) => {
+      if (!inspiration) {
+        return res.sendStatus(404);
+      }
+      res.send(inspiration);
+    });
   } catch (e) {
-    res.status(500).send();
+    res.sendStatus(500);
   }
 };
 
-module.exports = { grantInspiration, findInspiration, updateInspiration, deleteInspiration };
+module.exports = { grantInspiration, findAllInspiration, findInspiration, updateInspiration, deleteInspiration };

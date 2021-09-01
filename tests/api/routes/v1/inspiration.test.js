@@ -62,6 +62,7 @@ describe('Adding inspiration to a character', () => {
 });
 
 describe('Fetching inspiration for a character', () => {
+  beforeEach(setupDatabase);
   test('Should return all inspiration objects for a character of an authenticated user', async () => {
     const response = await request(app)
       .get(`/api/v1/inspiration?name=${characterOne.name}&campaign=${characterOne.campaign}`)
@@ -73,6 +74,34 @@ describe('Fetching inspiration for a character', () => {
     expect(JSON.stringify(response.body[1]._id)).toEqual(JSON.stringify(inspirationTwo._id));
     expect(JSON.stringify(response.body[0].owner)).toStrictEqual(JSON.stringify(userOneId));
     expect(response.body).toHaveLength(2);
+  });
+
+  test('Should return a single inspiration object', async () => {
+    const response = await request(app)
+      .get(`/api/v1/inspiration/${inspirationOne._id}`)
+      .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+      .send()
+      .expect(200);
+
+    const inspiration = await Inspiration.findById(response.body._id);
+    expect(response.body.note).toBe(inspiration.note);
+    expect(JSON.stringify(response.body.owner)).toStrictEqual(JSON.stringify(inspiration.owner));
+  });
+
+  test('Should not return ab inspiration object with the wrong ID', async () => {
+    await request(app)
+      .get(`/api/v1/inspiration/${inspirationOne.character}`)
+      .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+      .send()
+      .expect(404);
+  });
+
+  test('Should not return a single inspiration object for the wrong user', async () => {
+    await request(app)
+      .get(`/api/v1/inspiration/${inspirationOne._id}`)
+      .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
+      .send()
+      .expect(404);
   });
 
   test('Should not return the inspiration for a character if it is not the owner', async () => {
@@ -92,6 +121,7 @@ describe('Fetching inspiration for a character', () => {
 });
 
 describe('Updating notes on the inspiration object', () => {
+  beforeEach(setupDatabase);
   test('Should update the note field on the inspiration for an authenticated user', async () => {
     const response = await request(app)
       .patch(`/api/v1/inspiration/${inspirationOne._id}`)
@@ -115,6 +145,16 @@ describe('Updating notes on the inspiration object', () => {
     expect(400);
   });
 
+  test('Should not return an inspiration object for the wrong user', async () => {
+    await request(app)
+      .patch(`/api/v1/inspiration/${inspirationOne._id}`)
+      .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
+      .send({
+        inspNote: 'This is an updated note'
+      });
+    expect(404);
+  });
+
   test('Should not update inspiration from an unauthenticated user', async () => {
     await request(app).patch(`/api/v1/inspiration/${inspirationOne._id}`).send({
       note: 'This is an updated note'
@@ -124,7 +164,8 @@ describe('Updating notes on the inspiration object', () => {
 });
 
 describe('Removing inspirations from the character', () => {
-  test('Should remove inspiration from a character', async () => {
+  beforeEach(setupDatabase);
+  test('Should remove inspiration from a character for an authenticated user', async () => {
     const response = await request(app)
       .delete(`/api/v1/inspiration/${inspirationOne._id}`)
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
@@ -133,5 +174,13 @@ describe('Removing inspirations from the character', () => {
 
     const inspiration = Inspiration.findById({ _id: response._id });
     expect(inspiration).toBeNull;
+  });
+
+  test('Should not remove inspiration from a character for the wrong user', async () => {
+    await request(app)
+      .delete(`/api/v1/inspiration/${inspirationOne._id}`)
+      .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
+      .send();
+    expect(404);
   });
 });
