@@ -1,14 +1,14 @@
 {
   "name": "inspiration-tracker-api",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A tracker for DM inspiration",
   "engines": {
     "node": "16.8"
   },
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
+    "start": "node src/server.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/server.js",
     "test": "env-cmd -f ./config/test.env jest --runInBand --watch",
     "ci": "jest --runInBand --ci --coverage && codecov"
   },

@@ -1,11 +1,11 @@
 const request = require('supertest');
 const app = require('../../../src/app');
-const db = require('../../../src/db/connect');
+const connectMongo = require('../../../src/db/connect');
 const Character = require('../../../src/models/character');
 const { userOne, userTwo, characterOne, characterTwo, setupDatabase, disconnectMongo } = require('../../fixtures/db');
 
 beforeAll((done) => {
-  db.connectMongo();
+  connectMongo();
   done();
 });
 
