@@ -30,6 +30,19 @@ const userTwo = {
   ]
 };
 
+const userThreeId = new mongoose.Types.ObjectId();
+const userThree = {
+  _id: userThreeId,
+  name: 'Jack Doe',
+  email: 'Jack@example.com',
+  password: 'testwhat53!',
+  tokens: [
+    {
+      token: jwt.sign({ _id: userThreeId }, process.env.JWT_SECRET)
+    }
+  ]
+};
+
 const characterOne = {
   _id: new mongoose.Types.ObjectId(),
   name: 'Test Character',
@@ -71,6 +84,7 @@ const setupDatabase = async () => {
   await Inspiration.deleteMany();
   await new User(userOne).save();
   await new User(userTwo).save();
+  await new User(userThree).save();
   await new Character(characterOne).save();
   await new Character(characterTwo).save();
   await new Character(characterThree).save();
@@ -91,6 +105,7 @@ module.exports = {
   userTwoId,
   userOne,
   userTwo,
+  userThree,
   characterOne,
   characterTwo,
   inspirationOne,

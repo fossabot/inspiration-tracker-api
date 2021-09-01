@@ -5,6 +5,7 @@ const Character = require('../../../../src/models/character');
 const {
   userOne,
   userTwo,
+  userThree,
   characterOne,
   characterTwo,
   setupDatabase,
@@ -63,6 +64,16 @@ describe('Updating a character', () => {
     expect(character.name).toBe(response.body.name);
   });
 
+  test('Should not update a character with invalid properties', async () => {
+    await request(app)
+      .patch(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
+      .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+      .send({
+        charName: 'Testing the name change'
+      })
+      .expect(400);
+  });
+
   test('Should not update a character for the wrong user', async () => {
     await request(app)
       .patch(`/api/v1/character/sheet?name=${characterOne.name}&campaign=${characterOne.campaign}`)
@@ -98,6 +109,14 @@ describe('Searching for characters', () => {
       .expect(200);
 
     expect(response.body.characters).toHaveLength(2);
+  });
+
+  test('Should return all characters for an authenticated user', async () => {
+    await request(app)
+      .get('/api/v1/character')
+      .set('Authorization', `Bearer ${userThree.tokens[0].token}`)
+      .send()
+      .expect(404);
   });
 
   test('Should not return all characters for an unauthenticated user', async () => {
