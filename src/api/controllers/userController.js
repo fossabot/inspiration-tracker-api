@@ -1,17 +1,12 @@
-const express = require('express');
-const auth = require('../middleware/auth');
-
-const router = new express.Router();
-
-router.get('/profile', auth, async (req, res) => {
+const getProfile = async (req, res) => {
   try {
     res.send(req.user);
   } catch (e) {
     res.status(500).send();
   }
-});
+};
 
-router.patch('/profile', auth, async (req, res) => {
+const updateProfile = async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password'];
   const isValid = updates.every((update) => allowedUpdates.includes(update));
@@ -26,15 +21,15 @@ router.patch('/profile', auth, async (req, res) => {
   } catch (e) {
     res.status(400).send(e);
   }
-});
+};
 
-router.delete('/', auth, async (req, res) => {
+const deleteProfile = async (req, res) => {
   try {
     await req.user.remove();
     res.send(req.user);
   } catch (e) {
     res.status(500).send();
   }
-});
+};
 
-module.exports = router;
+module.exports = { getProfile, updateProfile, deleteProfile };

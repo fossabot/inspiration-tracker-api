@@ -1,17 +1,17 @@
 const request = require('supertest');
-const app = require('../src/app');
-const db = require('../src/db/connect');
-const User = require('../src/models/user');
-const Character = require('../src/models/character');
-const { userOne, userOneId, setupDatabase } = require('./fixtures/db');
+const app = require('../../../../src/app');
+const connectMongo = require('../../../../src/db/connect');
+const User = require('../../../../src/models/user');
+const Character = require('../../../../src/models/character');
+const { userOne, userOneId, setupDatabase, disconnectMongo } = require('../../../fixtures/db');
 
 beforeAll((done) => {
-  db.connectMongo();
+  connectMongo();
   done();
 });
 
 afterAll((done) => {
-  db.disconnectMongo();
+  disconnectMongo();
   done();
 });
 
@@ -20,7 +20,7 @@ describe('User profile information', () => {
 
   test('Should get profile for user', async () => {
     await request(app)
-      .get('/user/profile')
+      .get('/api/v1/user/profile')
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send()
       .expect(200);
@@ -28,7 +28,7 @@ describe('User profile information', () => {
 
   test('Should update valid user fields', async () => {
     await request(app)
-      .patch('/user/profile')
+      .patch('/api/v1/user/profile')
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send({
         name: 'Jane Doe'
@@ -41,7 +41,7 @@ describe('User profile information', () => {
 
   test('Should not update invalid user fields', async () => {
     await request(app)
-      .patch('/user/profile')
+      .patch('/api/v1/user/profile')
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send({
         character: 'character name'
@@ -51,7 +51,7 @@ describe('User profile information', () => {
 
   test('Should not update a user if unauthenticated', async () => {
     await request(app)
-      .patch('/user/profile')
+      .patch('/api/v1/user/profile')
       .send({
         name: 'Jane Doe'
       })
@@ -60,7 +60,7 @@ describe('User profile information', () => {
 
   test('Should not update user with invalid name', async () => {
     await request(app)
-      .patch('/user/profile')
+      .patch('/api/v1/user/profile')
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send({
         name: null
@@ -70,7 +70,7 @@ describe('User profile information', () => {
 
   test('Should not update user with invalid email', async () => {
     await request(app)
-      .patch('/user/profile')
+      .patch('/api/v1/user/profile')
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send({
         email: 'testuseratexample.com'
@@ -80,7 +80,7 @@ describe('User profile information', () => {
 
   test('Should not update user with invalid password', async () => {
     await request(app)
-      .patch('/user/profile')
+      .patch('/api/v1/user/profile')
       .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
       .send({
         password: 'password'
@@ -93,7 +93,11 @@ describe('Delete user data', () => {
   beforeEach(setupDatabase);
 
   test('Should delete the user account', async () => {
-    await request(app).delete('/user').set('Authorization', `Bearer ${userOne.tokens[0].token}`).send().expect(200);
+    await request(app)
+      .delete('/api/v1/user')
+      .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+      .send()
+      .expect(200);
 
     const user = await User.findById(userOneId);
     expect(user).toBeNull();
@@ -102,6 +106,6 @@ describe('Delete user data', () => {
   });
 
   test('Should not delete an unauthenticated user', async () => {
-    await request(app).delete('/user').send().expect(401);
+    await request(app).delete('/api/v1/user').send().expect(401);
   });
 });
