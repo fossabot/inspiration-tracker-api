@@ -1,10 +1,6 @@
-const express = require('express');
-const Character = require('../models/character');
-const auth = require('../middleware/auth');
+const Character = require('../../models/character');
 
-const router = new express.Router();
-
-router.post('/', auth, async (req, res) => {
+const createNew = async (req, res) => {
   const character = new Character({
     ...req.body,
     owner: req.user._id
@@ -15,9 +11,9 @@ router.post('/', auth, async (req, res) => {
   } catch (e) {
     res.status(400).send(e);
   }
-});
+};
 
-router.get('/', auth, async (req, res) => {
+const findAllSheets = async (req, res) => {
   try {
     const characters = await Character.find({ owner: req.user._id });
 
@@ -28,9 +24,9 @@ router.get('/', auth, async (req, res) => {
   } catch (e) {
     res.status(500).send();
   }
-});
+};
 
-router.get('/sheet', auth, async (req, res) => {
+const findSheet = async (req, res) => {
   try {
     const character = await Character.findOne({
       name: new RegExp(`^${req.query.name}$`, 'i'),
@@ -49,9 +45,9 @@ router.get('/sheet', auth, async (req, res) => {
   } catch (e) {
     res.status(500).send();
   }
-});
+};
 
-router.patch('/sheet', auth, async (req, res) => {
+const updateSheet = async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'campaign'];
   const isValid = updates.every((update) => allowedUpdates.includes(update));
@@ -77,9 +73,9 @@ router.patch('/sheet', auth, async (req, res) => {
   } catch (e) {
     res.status(400).send(e);
   }
-});
+};
 
-router.delete('/sheet', auth, async (req, res) => {
+const deleteSheet = async (req, res) => {
   try {
     const character = await Character.findOne({
       name: new RegExp(`^${req.query.name}$`, 'i'),
@@ -96,6 +92,6 @@ router.delete('/sheet', auth, async (req, res) => {
   } catch (e) {
     res.status(500).send();
   }
-});
+};
 
-module.exports = router;
+module.exports = { createNew, findSheet, findAllSheets, updateSheet, deleteSheet };

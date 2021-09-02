@@ -1,10 +1,6 @@
-const express = require('express');
-const User = require('../models/user');
-const auth = require('../middleware/auth');
+const User = require('../../models/user');
 
-const router = new express.Router();
-
-router.post('/register', async (req, res) => {
+const registerUser = async (req, res) => {
   const user = new User(req.body);
 
   try {
@@ -14,9 +10,9 @@ router.post('/register', async (req, res) => {
   } catch (e) {
     res.status(400).send(e);
   }
-});
+};
 
-router.post('/login', async (req, res) => {
+const loginUser = async (req, res) => {
   try {
     const user = await User.findByCredentials(req.body.email, req.body.password);
     const token = await user.generateAuthToken();
@@ -24,9 +20,9 @@ router.post('/login', async (req, res) => {
   } catch (e) {
     res.status(400).send();
   }
-});
+};
 
-router.post('/logout', auth, async (req, res) => {
+const logoutUser = async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => {
       return token.token !== req.token;
@@ -37,9 +33,9 @@ router.post('/logout', auth, async (req, res) => {
   } catch (e) {
     res.status(500).send();
   }
-});
+};
 
-router.post('/logoutAll', auth, async (req, res) => {
+const logoutAllSessions = async (req, res) => {
   try {
     req.user.tokens = [];
     await req.user.save();
@@ -47,6 +43,6 @@ router.post('/logoutAll', auth, async (req, res) => {
   } catch (e) {
     res.status(500).send();
   }
-});
+};
 
-module.exports = router;
+module.exports = { registerUser, loginUser, logoutUser, logoutAllSessions };
